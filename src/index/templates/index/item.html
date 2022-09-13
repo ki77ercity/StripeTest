@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ item.id }}</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+<a href="{% url 'index' %}">HOME</a>
+<h1>{{ item.name }}</h1>
+<p>{{ item.description }}</p>
+<p>{{ item.get_price_usd }} $.</p>
+<button id="buy-button">Buy</button>
+{% csrf_token %}
+<script type="text/javascript">
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+    var buyButton = document.getElementById('buy-button');
+    buyButton.addEventListener('click', function() {
+        fetch("{% url 'create-checkout-session' item.id %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        })
+        .then(response =>  response.json())
+        .then(session => stripe.redirectToCheckout({ sessionId: session.id }))
+    });
+</script>
+</body>
+</html>

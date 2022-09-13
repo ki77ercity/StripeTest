@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Items</h1>
+{% for i in item %}
+<p>{{ i.name }}</p>
+<p>{{ i.get_price_usd }} $.</p>
+<a href="{% url 'item' i.id %}">view</a>
+{% endfor %}
+</body>
+</html>
